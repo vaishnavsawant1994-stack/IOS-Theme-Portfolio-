@@ -21,7 +21,7 @@ Edit **`site-config.js`**. Keep `mode: 'demo'` until verified ownership informat
 - `availabilityText`, truthful and kept current.
 - A verified HTTPS `formEndpoint` that accepts JSON POSTs and has abuse protection, rate limits, validation, and appropriate storage/retention policies. Test its delivery before changing `mode` to production.
 
-In demo mode, the contact form validates fields but **does not transmit personal information** to an unverified sample email. Social placeholders remain visible but are not clickable. The provided Soren Weil identity, phone, email, resume and testimonials are *sample data* for comparison with the original template; replace them before using publicly as your own work.
+In demo mode, the contact form validates fields but **does not transmit personal information** to an unverified sample email. Social, email and phone placeholders remain visible but are not clickable. The provided Soren Weil identity, phone, email, resume and testimonials are *sample data* for comparison with the original template; replace them before using publicly as your own work.
 
 ## What's implemented
 
