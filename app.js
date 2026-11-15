@@ -1,13 +1,23 @@
 /* VEXOO-INSPIRED RECREATION — editable, dependency-free. Original template: TE Studio / Framer. */
 const IMG = 'https://framerusercontent.com/images/';
+// Editable values live in site-config.js. The public preview intentionally uses demo data.
+const siteConfig = window.IOS_PORTFOLIO_CONFIG || {};
+const isDemo = siteConfig.mode !== 'production';
+const pageDescriptions = {
+ '/': 'A considered portfolio of digital design, visual craft and creative projects.',
+ '/about': 'Learn about the approach, experience and creative practice behind the portfolio.',
+ '/portfolio': 'Selected digital products, visual design, websites and case studies.',
+ '/contact': 'Get in touch about product design, visual identity and website projects.'
+};
+
 const ABOUT_IMAGE = '7esgEDTfqoCmh2yHxI65XfkMOCI.jpg';
 const profile = {
-  name: 'Soren Weil', role: 'AI Design Engineer', email: 'hello@soren.com', phone: '(+20) 115 123-4567',
-  resume: 'https://drive.google.com/file/d/167um-hT0g-Xc2ClPDNb0z40feV9LT7e2/view?usp=drive_link',
+  name: siteConfig.name || 'Soren Weil', role: siteConfig.role || 'AI Design Engineer', email: siteConfig.email || 'hello@soren.com', phone: siteConfig.phone || '(+20) 115 123-4567',
+  resume: siteConfig.resume || 'https://drive.google.com/file/d/167um-hT0g-Xc2ClPDNb0z40feV9LT7e2/view?usp=drive_link',
   social: [
-    ['X (Twitter)', '@soren.weil', 'https://x.com/'],
-    ['Instagram', '@its-soren', 'https://www.instagram.com/'],
-    ['LinkedIn', '@weil.soren', 'https://www.linkedin.com/']
+    ['X (Twitter)', siteConfig.socialHandles?.x || '@soren.weil', siteConfig.socialProfiles?.x || ''],
+    ['Instagram', siteConfig.socialHandles?.instagram || '@its-soren', siteConfig.socialProfiles?.instagram || ''],
+    ['LinkedIn', siteConfig.socialHandles?.linkedin || '@weil.soren', siteConfig.socialProfiles?.linkedin || '']
   ]
 };
 const tools = [
@@ -77,13 +87,18 @@ const themeStorage = {get(){try{return localStorage.getItem('vexoo-theme')}catch
 let theme = themeStorage.get() || 'dark';
 let cleanupScroll = () => {};
 document.documentElement.dataset.theme = theme;
-function clockText(){return new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(new Date())}
-function cityText(){return 'Pune'}
+function clockText(){
+  const options={hour:'numeric',minute:'2-digit'};
+  if(siteConfig.timeZone && siteConfig.timeZone!=='auto') options.timeZone=siteConfig.timeZone;
+  try{return new Intl.DateTimeFormat('en-US',options).format(new Date())}
+  catch{return new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit'}).format(new Date())}
+}
+function cityText(){return siteConfig.locationLabel || 'Local time'}
 function header({back=false,home=false}={}){
   const label = home?'Soren Weil':(back?'Back':'Home');const href=home?'/':(back?'/portfolio':'/');
   return `<header class="site-header reveal" aria-label="Site header">
-    <a class="identity-link" href="${href}" data-link>${back?iconBack+'<span>Back</span>':home?'<span>Soren Weil</span>':iconBack+'<span>Home</span>'}</a>
-    <span class="header-role">AI Design Engineer</span>
+    <a class="identity-link" href="${href}" data-link>${back?iconBack+'<span>Back</span>':home?'<span>'+profile.name+'</span>':iconBack+'<span>Home</span>'}</a>
+    <span class="header-role">${profile.role}</span>
     <div class="header-right"><span class="location">${cityText()} <span class="sep">•</span> <time id="live-clock">${clockText()}</time></span>
     <button class="theme-toggle" aria-label="Toggle color theme" aria-pressed="${theme==='light'}" title="Switch between light and dark themes"><span class="toggle-dot"></span></button></div>
   </header>`;
@@ -91,12 +106,12 @@ function header({back=false,home=false}={}){
 function footer(){return `<footer class="site-footer reveal">
   <div class="footer-grid">
     <div><span class="footer-label">Email</span><a href="mailto:${profile.email}">${profile.email}</a></div>
-    <div><span class="footer-label">Phone</span><a href="tel:+201151234567">${profile.phone}</a></div>
-    ${profile.social.map(s=>`<div><span class="footer-label">${s[0]}</span><a href="${s[2]}" target="_blank" rel="noreferrer noopener">${s[1]} ${iconArrow}</a></div>`).join('')}
-  </div><div class="footer-bottom"><span>© ${new Date().getFullYear()} Soren Weil</span><a href="/" data-link>Back to top ↑</a></div>
+    <div><span class="footer-label">Phone</span>${isDemo?`<span class="demo-contact" title="Sample contact detail">${profile.phone}</span>`:`<a href="tel:${String(siteConfig.phoneDial||'').replace(/[^+\d]/g,'')}">${profile.phone}</a>`}</div>
+    ${profile.social.map(s=>`<div><span class="footer-label">${s[0]}</span>${s[2]?`<a href="${s[2]}" target="_blank" rel="noreferrer noopener">${s[1]} ${iconArrow}</a>`:`<span class="social-unconfigured" title="Profile URL not configured">${s[1]}</span>`}</div>`).join('')}
+  </div><div class="footer-bottom"><span>© ${new Date().getFullYear()} ${profile.name}</span><a href="#top" data-scroll-top>Back to top ↑</a></div>
 </footer>`;}
 function wrapper(content,opts={}){
- return `<div class="app-shell ${opts.home?'is-home':''}"><div class="content-wrap">${header(opts)}<main id="main" tabindex="-1">${content}</main>${opts.home?'':footer()}</div><a class="template-pill" href="https://framer.link/8yundsi" target="_blank" rel="noopener noreferrer">Get this template ${iconArrow}</a>${opts.home?`<a class="framer-pill" href="https://www.framer.com/" target="_blank" rel="noopener noreferrer">◆ &nbsp; Made in Framer</a>`:''}</div>`;
+ return `<div class="app-shell ${opts.home?'is-home':''}" id="top"><a class="skip-link" href="#main">Skip to content</a><div class="content-wrap">${header(opts)}<main id="main" tabindex="-1">${content}</main>${opts.home?'':footer()}</div><a class="template-pill" href="https://framer.link/8yundsi" target="_blank" rel="noopener noreferrer">Get this template ${iconArrow}</a>${opts.home?`<a class="framer-pill" href="https://www.framer.com/" target="_blank" rel="noopener noreferrer">◆ &nbsp; Made in Framer</a>`:''}</div>`;
 }
 function home(){
  return wrapper(`<div class="home-hero reveal"><h1 aria-label="Soren Weil">Soren <span>Weil</span></h1><span class="hero-wave">Hey <span aria-hidden="true">↗</span></span></div>
@@ -113,7 +128,7 @@ function about(){
  return wrapper(`<section class="about-intro reveal"><h1 class="page-name">About</h1>
    <p class="big-biography" id="fade-text">I'm <strong>Soren Weil</strong> – a designer who believes the best work lives at the intersection of clarity and craft. I specialize in product experiences that feel considered from every angle, the layout, the type, the small details most people scroll past without noticing. Consistency matters to me, not as a rule, but because it's what makes a product feel trustworthy. Alongside my design practice, I'm building things of my own – driven by curiosity, a love for creative problem-solving, and a quiet need to make something that didn't exist before.</p></section>
    <figure class="about-portrait image-frame reveal">${img(ABOUT_IMAGE,'about-portrait-img','Portrait of Soren Weil facing left')}<figcaption>Soren Weil / AI Design Engineer</figcaption></figure>
-   <section class="section-shell testimonials-section"><div class="section-header reveal"><h2>Kind words<span class="muted"> / 05</span></h2><div class="quote-controls"><button type="button" data-quote="prev" aria-label="Previous testimonial">←</button><button type="button" data-quote="next" aria-label="Next testimonial">→</button></div></div><div class="testimonials-rail" id="testimonials">${testimonials.map((t,i)=>`<article class="testimonial reveal"><span class="quote-mark">❝</span><p>${t[2]}</p><div class="quote-author"><strong>${t[0]}</strong><span>${t[1]}</span></div><small>0${i+1} / 05</small></article>`).join('')}</div></section>
+   <section class="section-shell testimonials-section"><div class="section-header reveal"><h2>Kind words<span class="muted"> / 05</span></h2><div class="quote-controls"><button type="button" data-quote="prev" aria-controls="testimonials" aria-label="Previous testimonial">←</button><button type="button" data-quote="next" aria-controls="testimonials" aria-label="Next testimonial">→</button></div></div><div class="testimonials-rail" id="testimonials">${testimonials.map((t,i)=>`<article class="testimonial reveal"><span class="quote-mark">❝</span><p>${t[2]}</p><div class="quote-author"><strong>${t[0]}</strong><span>${t[1]}</span></div><small>0${i+1} / 05</small></article>`).join('')}</div></section>
    <section class="section-shell experience-section"><div class="section-header reveal"><h2>Experience<span class="muted"> / 04</span></h2></div><div class="timeline">${experiences.map(e=>`<article class="experience-row reveal"><div class="date">${e[0]}</div><div class="exp-job"><h3>${e[1]}</h3><p>${e[2]}</p></div><div class="exp-description">${e[3]}</div></article>`).join('')}</div></section>
    <section class="section-shell service-section reveal"><div class="section-header"><h2>What I do</h2></div>${['Digital Design','Art Direction','Framer Development'].map((s,i)=>`<div class="service-line"><span>0${i+1}</span><h3>${s}</h3><span class="service-dash">↗</span></div>`).join('')}</section>`);
 }
@@ -137,14 +152,14 @@ function detail(p){let idx=projects.indexOf(p), prev=projects[idx-1],next=projec
 function contact(){
  const projectTypes=['Multipage Website Design','Landing Page Design','Framer Website Development','Framer Landing Page Development'];
  const budgets=['$1k – $5k','$5k – $10k','$10k – $20k','> $20k'];
- return wrapper(`<section class="contact-intro reveal"><h1>If you prefer not to fill out forms, feel free to <a href="mailto:${profile.email}">email me directly</a> and let's talk about the next big thing!</h1><div class="contact-intro-links"><a href="tel:+201151234567"><span>Phone</span><strong>${profile.phone}</strong></a><a href="mailto:${profile.email}"><span>Email</span><strong>${profile.email}</strong></a></div></section>
+ return wrapper(`<section class="contact-intro reveal"><h1>If you prefer not to fill out forms, feel free to <a href="mailto:${profile.email}">email me directly</a> and let's talk about the next big thing!</h1><div class="contact-intro-links">${isDemo?`<div class="demo-contact"><span>Phone</span><strong>${profile.phone}</strong><small>Sample number</small></div>`:`<a href="tel:${String(siteConfig.phoneDial||'').replace(/[^+\d]/g,'')}"><span>Phone</span><strong>${profile.phone}</strong></a>`}<a href="mailto:${profile.email}"><span>Email</span><strong>${profile.email}</strong></a></div></section>
  <section class="form-container reveal">
  <form id="contact-form" novalidate autocomplete="on">
-   <div class="two-fields"><label class="form-field"><span>Full name <b>*</b></span><input name="name" type="text" placeholder="ex. John Smith" required minlength="2" autocomplete="name" aria-describedby="name-error" /><small class="field-error" id="name-error"></small></label><label class="form-field"><span>Email <b>*</b></span><input name="email" type="email" placeholder="hello@website.com" required autocomplete="email" aria-describedby="email-error" /><small class="field-error" id="email-error"></small></label></div>
+   <div class="two-fields"><label class="form-field"><span>Full name <b>*</b></span><input name="name" type="text" placeholder="ex. John Smith" required minlength="2" maxlength="120" autocomplete="name" aria-describedby="name-error" /><small class="field-error" id="name-error"></small></label><label class="form-field"><span>Email <b>*</b></span><input name="email" type="email" placeholder="hello@website.com" required maxlength="254" autocomplete="email" aria-describedby="email-error" /><small class="field-error" id="email-error"></small></label></div>
    <fieldset class="form-group"><legend>What's Your Project About?</legend><div class="choice-grid" role="group" aria-label="Project types">${projectTypes.map(v=>`<label class="choice"><input type="checkbox" name="projectType" value="${v}"/><span class="choice-check">✓</span><span>${v}</span></label>`).join('')}</div></fieldset>
    <fieldset class="form-group"><legend>Project Budget</legend><div class="choice-grid" role="radiogroup" aria-label="Project budget">${budgets.map(v=>`<label class="choice"><input type="radio" name="budget" value="${v.replaceAll('"','&quot;')}"/><span class="choice-check">✓</span><span>${v.replace('>','&gt;')}</span></label>`).join('')}</div></fieldset>
-   <label class="form-field message-field"><span>Share More Details</span><textarea name="message" rows="5" placeholder="Tell me a little about your project, goals, and timelines..."></textarea></label>
-   <div class="submit-row"><button type="submit" class="submit-button"><span>Submit</span>${iconArrow}</button><div class="availability"><span class="status-dot"></span> One spot available for May, 2026</div></div><div id="form-status" role="status" aria-live="polite"></div>
+   <label class="form-field message-field"><span>Share More Details</span><textarea name="message" rows="5" maxlength="5000" placeholder="Tell me a little about your project, goals, and timelines..."></textarea></label>
+   <div class="submit-row"><button type="submit" class="submit-button"><span>Submit</span>${iconArrow}</button><div class="availability"><span class="status-dot"></span> ${siteConfig.availabilityText || 'Project enquiries welcome'}</div></div><div id="form-status" role="status" aria-live="polite" aria-atomic="true"></div>
  </form></section>`);
 }
 function notFound(){return wrapper(`<section class="not-found reveal"><p class="eyebrow">ERROR / 404</p><h1>404<span>↗</span></h1><p>Looks like this page took a different direction.</p><a href="/" data-link class="back-home">${iconBack} Return home</a></section>`)}
@@ -153,7 +168,14 @@ function render(){
  cleanupScroll();
  const path=normalizePath();const project = projects.find(p=>path==='/portfolio/'+p.slug);
  document.querySelector('#app').innerHTML=path==='/'?home():path==='/about'?about():path==='/portfolio'?portfolio():path==='/contact'?contact():project?detail(project):notFound();
- document.title = path==='/'?'Soren Weil — AI Design Engineer':(project?project.title:path.slice(1).replace(/^./,s=>s.toUpperCase()))+' — Soren Weil';
+ document.title = path==='/'?`${profile.name} — ${profile.role}`:(project?project.title:path.slice(1).replace(/^./,c=>c.toUpperCase()))+' — '+profile.name;
+  const description = project ? `${project.title} — a ${project.category.toLowerCase()} case study.` : pageDescriptions[path] || 'Explore a considered design portfolio.';
+  function setMeta(key,value,selector){let el=document.head.querySelector(selector);if(!el){el=document.createElement('meta');el.setAttribute(key.startsWith('og:')?'property':'name',key);document.head.appendChild(el)}el.setAttribute('content',value)}
+  setMeta('description',description,'meta[name="description"]');setMeta('og:title',document.title,'meta[property="og:title"]');setMeta('og:description',description,'meta[property="og:description"]');
+  setMeta('twitter:card','summary_large_image','meta[name="twitter:card"]');
+  let canonical=document.head.querySelector('link[rel="canonical"]');if(!canonical){canonical=document.createElement('link');canonical.rel='canonical';document.head.appendChild(canonical)}
+  if(location.protocol==='https:') canonical.href=location.origin+(path==='/'?'/':path);
+  document.documentElement.setAttribute('data-route',path);
  document.querySelector('meta[name="theme-color"]').setAttribute('content',theme==='dark'?'#080808':'#f4f4f2');
  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.setProperty('--delay',`${Math.min(i%8*65,350)}ms`)});
  initReveal();initClock();initPointer();initCardHover();initQuote();initForm();initAboutText();
@@ -163,11 +185,25 @@ function initReveal(){revealObserver?.disconnect();const nodes=document.querySel
  revealObserver=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');revealObserver.unobserve(e.target)}})},{rootMargin:'0px 0px -35px 0px',threshold:.07});nodes.forEach(n=>revealObserver.observe(n));}
 function initClock(){const clock=document.getElementById('live-clock');if(clock)clock.textContent=clockText()}
 setInterval(()=>{const c=document.getElementById('live-clock');if(c)c.textContent=clockText()},30000);
-function initPointer(){document.querySelectorAll('.portrait-card').forEach(el=>{
- el.addEventListener('pointermove',e=>{if(!window.matchMedia('(pointer:fine)').matches)return;const r=el.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.setProperty('--px',((x+.5)*100).toFixed(1)+'%');el.style.setProperty('--py',((y+.5)*100).toFixed(1)+'%');el.style.setProperty('--rx',(y*-6).toFixed(2)+'deg');el.style.setProperty('--ry',(x*8).toFixed(2)+'deg');el.style.setProperty('--photo-reveal','1')});
- el.addEventListener('focusin',()=>el.style.setProperty('--photo-reveal','1'));el.addEventListener('focusout',()=>el.style.setProperty('--photo-reveal','0'));
- el.addEventListener('pointerleave',()=>{el.style.setProperty('--rx','0deg');el.style.setProperty('--ry','0deg');el.style.setProperty('--photo-reveal','0');el.style.setProperty('--px','50%');el.style.setProperty('--py','50%')});
- });}
+function initPointer(){
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+ document.querySelectorAll('.portrait-card').forEach(el=>{
+   let frame=0, bounds, pos={x:50,y:50,rx:0,ry:0};
+   const commit=()=>{frame=0;el.style.setProperty('--px',pos.x.toFixed(2)+'%');el.style.setProperty('--py',pos.y.toFixed(2)+'%');el.style.setProperty('--rx',pos.rx.toFixed(2)+'deg');el.style.setProperty('--ry',pos.ry.toFixed(2)+'deg')};
+   el.addEventListener('pointerenter',()=>{bounds=el.getBoundingClientRect();el.style.setProperty('--photo-reveal','1')});
+   el.addEventListener('pointermove',e=>{
+     if(!matchMedia('(pointer:fine)').matches)return;
+     bounds ||= el.getBoundingClientRect();
+     const x=Math.max(0,Math.min(1,(e.clientX-bounds.left)/bounds.width));
+     const y=Math.max(0,Math.min(1,(e.clientY-bounds.top)/bounds.height));
+     pos={x:x*100,y:y*100,rx:(.5-y)*12,ry:(x-.5)*16};
+     if(!frame)frame=requestAnimationFrame(commit);
+   },{passive:true});
+   el.addEventListener('focusin',()=>el.style.setProperty('--photo-reveal','1'));
+   el.addEventListener('focusout',()=>el.style.setProperty('--photo-reveal','0'));
+   el.addEventListener('pointerleave',()=>{if(frame)cancelAnimationFrame(frame);frame=0;bounds=null;pos={x:50,y:50,rx:0,ry:0};commit();el.style.setProperty('--photo-reveal','0')});
+ });
+}
 function initCardHover(){
  if(!window.matchMedia('(hover:hover) and (pointer:fine)').matches || window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
  document.querySelectorAll('.is-home .tile-link').forEach(card=>{
@@ -179,7 +215,13 @@ function initCardHover(){
    card.addEventListener('pointerleave',()=>{card.style.removeProperty('--hover-x');card.style.removeProperty('--hover-y');if(frame){cancelAnimationFrame(frame);frame=0}});
  });
 }
-function initQuote(){const el=document.getElementById('testimonials');if(!el)return;document.querySelectorAll('[data-quote]').forEach(btn=>btn.addEventListener('click',()=>el.scrollBy({left:(btn.dataset.quote==='next'?1:-1)*(el.querySelector('.testimonial').getBoundingClientRect().width+16),behavior:'smooth'})))}
+function initQuote(){
+ const el=document.getElementById('testimonials');if(!el)return;
+ const controls=[...document.querySelectorAll('[data-quote]')];
+ const sync=()=>{const end=el.scrollWidth-el.clientWidth;controls.forEach(btn=>{btn.disabled=btn.dataset.quote==='prev'?el.scrollLeft<2:el.scrollLeft>=end-2})};
+ controls.forEach(btn=>btn.addEventListener('click',()=>{const card=el.querySelector('.testimonial');if(!card)return;el.scrollBy({left:(btn.dataset.quote==='next'?1:-1)*(card.getBoundingClientRect().width+16),behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});setTimeout(sync,400)}));
+ el.addEventListener('scroll',sync,{passive:true});sync();
+}
 function initAboutText(){
  const el=document.getElementById('fade-text');if(!el)return;
  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -205,15 +247,13 @@ function initForm(){const form=document.getElementById('contact-form');if(!form)
   if(!valid){status.textContent='Please check the highlighted fields.';status.className='error';return}
   const selected=[...form.querySelectorAll('[name="projectType"]:checked')].map(x=>x.value);
   const values={name:name.value.trim(),email:email.value.trim(),projectTypes:selected,budget:form.querySelector('[name="budget"]:checked')?.value||'Not specified',details:form.elements.message.value.trim()};
-  const endpoint=window.VEXOO_CONFIG?.formEndpoint;
-  if(endpoint){const button=form.querySelector('button[type="submit"]');button.disabled=true;button.querySelector('span').textContent='Sending...';try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(values)});if(!r.ok)throw Error('Unable to send');status.className='success';status.textContent='Thank you — your enquiry has been submitted.';form.reset()}catch(err){status.className='error';status.textContent='Submission failed. Please email '+profile.email+' directly.'}finally{button.disabled=false;button.querySelector('span').textContent='Submit'}return}
-  const subject=encodeURIComponent('Project enquiry from '+values.name);
-  const body=encodeURIComponent(['Name: '+values.name,'Email: '+values.email,'Project: '+(values.projectTypes.join(', ')||'Not specified'),'Budget: '+values.budget,'','Details:',values.details||'Not provided'].join('\n'));
-  status.className='notice';status.textContent='Email draft prepared. Please send it from your email application to complete your enquiry.';
-  const link=document.createElement('a');link.href=`mailto:${profile.email}?subject=${subject}&body=${body}`;document.body.append(link);link.click();link.remove();
+  const endpoint=siteConfig.formEndpoint || window.VEXOO_CONFIG?.formEndpoint;
+  if(endpoint){const button=form.querySelector('button[type="submit"]');button.disabled=true;button.querySelector('span').textContent='Sending...';try{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(values),signal:controller.signal});if(!r.ok)throw Error('Unable to send');status.className='success';status.textContent='Thank you — the submission endpoint accepted your enquiry.';form.reset()}finally{clearTimeout(timer)}}catch(err){status.className='error';status.textContent='Submission failed. Please email '+profile.email+' directly.'}finally{button.disabled=false;button.querySelector('span').textContent='Submit'}return}
+  status.className='notice';status.textContent='Preview only: no message was sent. A verified contact endpoint must be configured before this form can receive enquiries.';
  });}
 function go(path){if(normalizePath()!==path){try{history.pushState({},'',path);window.__previewPath=''}catch(_e){window.__previewPath=path}}window.scrollTo({top:0,behavior:'instant'});document.documentElement.classList.add('route-switching');render();requestAnimationFrame(()=>document.documentElement.classList.remove('route-switching'));document.getElementById('main')?.focus({preventScroll:true})}
+document.addEventListener('click',e=>{const topLink=e.target.closest('[data-scroll-top]');if(!topLink)return;e.preventDefault();window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});document.getElementById('main')?.focus({preventScroll:true})});
 document.addEventListener('click',e=>{let link=e.target.closest('a[data-link]');if(link&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey&&e.button===0){e.preventDefault();const target=link.getAttribute('href');go(target?.startsWith('/')?target:new URL(link.href,location.href).pathname)}});
-document.addEventListener('click',e=>{let btn=e.target.closest('.theme-toggle');if(!btn)return;theme=theme==='dark'?'light':'dark';themeStorage.set(theme);document.documentElement.dataset.theme=theme;btn.setAttribute('aria-pressed',theme==='light');document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#080808':'#f4f4f2'});
+document.addEventListener('click',e=>{let btn=e.target.closest('.theme-toggle');if(!btn)return;theme=theme==='dark'?'light':'dark';themeStorage.set(theme);document.documentElement.dataset.theme=theme;btn.setAttribute('aria-pressed',theme==='light');btn.setAttribute('aria-label',theme==='dark'?'Switch to light theme':'Switch to dark theme');document.querySelector('meta[name="theme-color"]').content=theme==='dark'?'#080808':'#f4f4f2'});
 window.addEventListener('popstate',()=>{window.scrollTo({top:0,behavior:'instant'});render()});
 render();
