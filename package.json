@@ -1,10 +1,12 @@
 {
   "name": "ios-theme-portfolio",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "python -m http.server 4173",
-    "check": "node --check app.js"
+    "check": "node --check app.js && node --check site-config.js",
+    "test": "node --test tests/source.test.mjs",
+    "build": "node tools/build.mjs"
   }
 }
