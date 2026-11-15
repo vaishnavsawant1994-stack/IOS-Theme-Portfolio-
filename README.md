@@ -19,3 +19,7 @@ The canonical editable source is `index.html` + `styles.css` + `app.js`. `previe
 ## Attribution and reference
 Original visual reference: https://vexoo.framer.website/
 Vexoo is a Framer template by TE Studio. Respect the original template's terms and third-party media licenses before redistribution or commercial use.
+
+## Detailed project documentation
+
+The [**Project Handbook**](docs/PROJECT_HANDBOOK.md) explains this repository individually: product objectives, user journeys, code and technology, current implementation scope, risks, local development, quality gates, and the next engineering milestones. Statements about planned features do not imply release acceptance.
