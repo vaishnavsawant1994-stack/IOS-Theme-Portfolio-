@@ -1,0 +1,12 @@
+import fs from 'node:fs';import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..');
+let html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const css=fs.readFileSync(path.join(root,'styles.css'),'utf8');
+const config=fs.readFileSync(path.join(root,'site-config.js'),'utf8');
+const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+html=html.replace('<link rel="stylesheet" href="/styles.css" />','<style>'+css+'</style>');
+html=html.replace('<script defer src="/site-config.js"></script>','');
+html=html.replace('<script defer src="/app.js"></script>','');
+html=html.replace('</body>','<script>'+config+'</script>\n<script>'+app+'</script>\n</body>');
+fs.writeFileSync(path.join(root,'preview.html'),html);
+console.log('Rebuilt preview.html');
