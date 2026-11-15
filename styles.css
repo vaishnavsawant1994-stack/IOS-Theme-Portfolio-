@@ -765,3 +765,20 @@ body{overflow-x:clip;text-size-adjust:100%;-webkit-text-size-adjust:100%}
  .is-home .bento > :nth-child(2)::before{font-size:clamp(138px,11.85vw,230px);opacity:.52;filter:blur(12px);top:-115px}
  .is-home .bento-card:not(.portrait-card)::after{opacity:.19}
 }
+
+
+/* V8: focused quality fixes. Keep V7 reference-matched desktop grid unchanged. */
+.skip-link{position:fixed;z-index:1000;top:-80px;left:16px;padding:12px 18px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:700;box-shadow:0 8px 24px #0006}
+.skip-link:focus-visible{top:12px;outline:2px solid var(--focus);outline-offset:4px}
+.social-unconfigured,.demo-contact{color:var(--muted);cursor:default}
+.contact-intro-links .demo-contact{display:flex;flex-direction:column;gap:8px}
+.demo-contact small{font-size:11px;color:var(--muted)}
+#form-status:not(:empty){padding:12px 0;font-size:13px;line-height:1.55;max-width:600px}
+#form-status.notice{color:var(--ink)}
+#form-status.error{color:#ef9a9a}
+:root[data-theme='light'] #form-status.error{color:#a01a1a}
+#form-status.success{color:#7adab0}
+:root[data-theme='light'] #form-status.success{color:#166f49}
+.quote-controls button:disabled{opacity:.35;cursor:not-allowed}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media(max-width:699px){.skip-link:focus-visible{left:12px;top:9px}.contact-intro-links .demo-contact{min-width:0}}
