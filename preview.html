@@ -931,7 +931,7 @@ function header({back=false,home=false}={}){
 }
 function footer(){return `<footer class="site-footer reveal">
   <div class="footer-grid">
-    <div><span class="footer-label">Email</span><a href="mailto:${profile.email}">${profile.email}</a></div>
+    <div><span class="footer-label">Email</span>${isDemo?`<span class="demo-contact" title="Sample email address">${profile.email}</span>`:`<a href="mailto:${profile.email}">${profile.email}</a>`}</div>
     <div><span class="footer-label">Phone</span>${isDemo?`<span class="demo-contact" title="Sample contact detail">${profile.phone}</span>`:`<a href="tel:${String(siteConfig.phoneDial||'').replace(/[^+\d]/g,'')}">${profile.phone}</a>`}</div>
     ${profile.social.map(s=>`<div><span class="footer-label">${s[0]}</span>${s[2]?`<a href="${s[2]}" target="_blank" rel="noreferrer noopener">${s[1]} ${iconArrow}</a>`:`<span class="social-unconfigured" title="Profile URL not configured">${s[1]}</span>`}</div>`).join('')}
   </div><div class="footer-bottom"><span>© ${new Date().getFullYear()} ${profile.name}</span><a href="#top" data-scroll-top>Back to top ↑</a></div>
@@ -978,7 +978,7 @@ function detail(p){let idx=projects.indexOf(p), prev=projects[idx-1],next=projec
 function contact(){
  const projectTypes=['Multipage Website Design','Landing Page Design','Framer Website Development','Framer Landing Page Development'];
  const budgets=['$1k – $5k','$5k – $10k','$10k – $20k','> $20k'];
- return wrapper(`<section class="contact-intro reveal"><h1>If you prefer not to fill out forms, feel free to <a href="mailto:${profile.email}">email me directly</a> and let's talk about the next big thing!</h1><div class="contact-intro-links">${isDemo?`<div class="demo-contact"><span>Phone</span><strong>${profile.phone}</strong><small>Sample number</small></div>`:`<a href="tel:${String(siteConfig.phoneDial||'').replace(/[^+\d]/g,'')}"><span>Phone</span><strong>${profile.phone}</strong></a>`}<a href="mailto:${profile.email}"><span>Email</span><strong>${profile.email}</strong></a></div></section>
+ return wrapper(`<section class="contact-intro reveal"><h1>If you prefer not to fill out forms, feel free to ${isDemo?`<span title="Sample contact email">email me directly</span>`:`<a href="mailto:${profile.email}">email me directly</a>`} and let's talk about the next big thing!</h1><div class="contact-intro-links">${isDemo?`<div class="demo-contact"><span>Phone</span><strong>${profile.phone}</strong><small>Sample number</small></div>`:`<a href="tel:${String(siteConfig.phoneDial||'').replace(/[^+\d]/g,'')}"><span>Phone</span><strong>${profile.phone}</strong></a>`}${isDemo?`<div class="demo-contact"><span>Email</span><strong>${profile.email}</strong><small>Sample email</small></div>`:`<a href="mailto:${profile.email}"><span>Email</span><strong>${profile.email}</strong></a>`}</div></section>
  <section class="form-container reveal">
  <form id="contact-form" novalidate autocomplete="on">
    <div class="two-fields"><label class="form-field"><span>Full name <b>*</b></span><input name="name" type="text" placeholder="ex. John Smith" required minlength="2" maxlength="120" autocomplete="name" aria-describedby="name-error" /><small class="field-error" id="name-error"></small></label><label class="form-field"><span>Email <b>*</b></span><input name="email" type="email" placeholder="hello@website.com" required maxlength="254" autocomplete="email" aria-describedby="email-error" /><small class="field-error" id="email-error"></small></label></div>
