@@ -14,6 +14,7 @@ test('legacy placeholder social hostnames are not active anchors',()=>{
  assert.ok(!js.includes("'https://x.com/'"));assert.ok(!js.includes("'https://www.instagram.com/'"));assert.ok(!js.includes("'https://www.linkedin.com/'"));
 });
 test('footer uses a same-page top action',()=>assert.ok(js.includes('data-scroll-top')));
+test('demo contact is not an active recipient or phone link',()=>{assert.ok(js.includes('isDemo?`<span class=\"demo-contact\"'));assert.ok(js.includes('Sample email'));assert.ok(js.includes('Sample number'))});
 test('expired May 2026 availability notice is absent',()=>assert.ok(!js.includes('One spot available for May, 2026')));
 test('contact endpoint is configurable and preview cannot report delivery',()=>{
  assert.ok(js.includes('siteConfig.formEndpoint'));
